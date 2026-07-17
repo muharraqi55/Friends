@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مكتبة الملفات المشتركة</title>
+    <title>مكتبة الملفات المشتركة | Shared Files Library</title>
     <!-- خط Cairo الفاخر -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <!-- مكتبة الأيقونات المتطورة -->
@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <style>
-        /* المتغيرات الأساسية للوضعين */
         :root {
             --bg-gradient: linear-gradient(-45deg, #0a0b10, #1a1c29, #0f111a, #151824);
             --card-bg: rgba(18, 20, 32, 0.75);
@@ -29,7 +28,6 @@
             --base-font-size: 16px;
         }
 
-        /* متغيرات الوضع النهاري */
         [data-theme="light"] {
             --bg-gradient: linear-gradient(-45deg, #f5f6fa, #e6e9f0, #eef1f6, #f1f2f6);
             --card-bg: rgba(255, 255, 255, 0.9);
@@ -69,7 +67,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* شريط التحكم العلوي (ليلي/نهاري وتكبير الخط) */
+        /* شريط التحكم العلوي المطور */
         .accessibility-bar {
             position: absolute;
             top: 20px;
@@ -79,12 +77,18 @@
             z-index: 100;
         }
 
+        /* التبديل الانسيابي للشريط عند قلب اللغة للموقع */
+        html[dir="ltr"] .accessibility-bar {
+            left: auto;
+            right: 20px;
+        }
+
         .acc-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 45px;
             height: 45px;
+            padding: 0 15px;
             border-radius: 12px;
             cursor: pointer;
             display: flex;
@@ -93,6 +97,8 @@
             font-size: 1.1rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
         }
 
         .acc-btn:hover {
@@ -162,6 +168,10 @@
             font-family: 'Cairo', sans-serif;
         }
 
+        html[dir="ltr"] #search {
+            padding: 18px 60px 18px 25px;
+        }
+
         #search:focus {
             outline: none;
             border-color: var(--neon-cyan);
@@ -175,6 +185,11 @@
             transform: translateY(-50%);
             color: var(--neon-cyan);
             font-size: 1.3rem;
+        }
+
+        html[dir="ltr"] .search-box i {
+            left: auto;
+            right: 25px;
         }
 
         #files-list {
@@ -206,10 +221,20 @@
             border-radius: 0 20px 20px 0;
         }
 
+        html[dir="ltr"] .file-card::before {
+            right: auto;
+            left: 0;
+            border-radius: 20px 0 0 20px;
+        }
+
         .file-card:hover {
             transform: translateX(-5px) translateY(-2px);
             background: var(--card-item-hover);
             box-shadow: 0 10px 30px rgba(108, 92, 231, 0.1);
+        }
+
+        html[dir="ltr"] .file-card:hover {
+            transform: translateX(5px) translateY(-2px);
         }
 
         .file-card:hover::before {
@@ -324,7 +349,7 @@
         }
 
         @media (max-width: 600px) {
-            body { padding: 80px 10px 20px 10px; } /* مساحة إضافية للأزرار العلوية بالهاتف */
+            body { padding: 90px 10px 20px 10px; }
             .main-container { padding: 25px 20px; border-radius: 20px; }
             h1 { font-size: 2rem; }
             .file-card { flex-direction: column; align-items: stretch; gap: 20px; text-align: center; padding: 20px; }
@@ -337,13 +362,17 @@
 </head>
 <body>
 
-<!-- شريط التحكم بالوضع الليلي وتكبير الحروف -->
+<!-- شريط التحكم المتطور (لغات، ليلي، حجم خط) -->
 <div class="accessibility-bar animate__animated animate__fadeIn">
+    <!-- زر تبديل اللغة (عربي/إنجليزي) -->
+    <button class="acc-btn" id="lang-toggle" title="Switch Language / تبديل اللغة">
+        EN
+    </button>
     <!-- زر التبديل الليلي/النهاري -->
     <button class="acc-btn" id="theme-toggle" title="تبديل الوضع الليلي/النهاري">
         <i class="fas fa-moon" id="theme-icon"></i>
     </button>
-    <!-- أزرار تكبير وتصغير الحروف -->
+    <!-- أزرار الخط -->
     <button class="acc-btn" onclick="changeFontSize(1)" title="تكبير الخط">
         <i class="fas fa-font"></i><i class="fas fa-plus" style="font-size: 10px; margin-right: 2px;"></i>
     </button>
@@ -353,8 +382,8 @@
 </div>
 
 <div class="main-container animate__animated animate__fadeInUp">
-    <h1>مكتبة الملفات المشتركة</h1>
-    <p class="subtitle">انقر للتحميل المباشر أو انسخ رابط الملف فوراً</p>
+    <h1 id="main-title">مكتبة الملفات المشتركة</h1>
+    <p id="main-subtitle" class="subtitle">انقر للتحميل المباشر أو انسخ رابط الملف فوراً</p>
     
     <div id="counter" class="file-counter">جاري فحص المستندات...</div>
 
@@ -363,33 +392,92 @@
         <i class="fas fa-search"></i>
     </div>
 
-    <div id="files-list">
-        <div class="status-msg"><i class="fas fa-circle-notch fa-spin"></i> جاري استدعاء مصفوفة البيانات...</div>
-    </div>
+    <div id="files-list"></div>
 </div>
 
-<div class="footer-credits animate__animated animate__fadeIn animate__delay-1s">
+<div id="footer-text" class="footer-credits animate__animated animate__fadeIn animate__delay-1s">
     تم إنشاء هذا الموقع لـ <span>القروب الثلاثي</span> © 2026
 </div>
 
 <script>
     let filesCloud = [];
-    let currentFontSize = 16; // الحجم الافتراضي للخط
+    let currentFontSize = 16;
+    
+    // قاموس نصوص الترجمة للغتين
+    const translations = {
+        ar: {
+            title: "مكتبة الملفات المشتركة",
+            subtitle: "انقر للتحميل المباشر أو انسخ رابط الملف فوراً",
+            searchPlaceholder: "ابحث عن ملفك هنا...",
+            counterText: "إجمالي الملفات المتوفرة: ",
+            loading: "جاري استدعاء مصفوفة البيانات...",
+            error: "فشل الاتصال بملف البيانات JSON. تأكد من وجوده!",
+            noFiles: "لم نجد أي ملف بهذا الاسم!",
+            download: "تحميل",
+            toastSuccess: "تم نسخ رابط التحميل المباشر!",
+            footer: "تم إنشاء هذا الموقع لـ <span>القروب الثلاثي</span> © 2026",
+            langBtn: "EN"
+        },
+        en: {
+            title: "Shared Files Library",
+            subtitle: "Click for direct download or copy file link instantly",
+            searchPlaceholder: "Search your file here...",
+            counterText: "Total available files: ",
+            loading: "Fetching files cloud data...",
+            error: "Failed to connect to JSON data. Make sure it exists!",
+            noFiles: "No files found with this name!",
+            download: "Download",
+            toastSuccess: "Direct download link copied successfully!",
+            footer: "This website was created for <span>The Trio Group</span> © 2026",
+            langBtn: "عربي"
+        }
+    };
 
-    // دالة التحكم في تكبير وتصغير الخط
+    // تحديد اللغة الحالية (الافتراضية عربي)
+    let currentLang = localStorage.getItem('lang') || 'ar';
+
+    function applyLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        
+        // تغيير اتجاه ولغة الـ HTML بالكامل
+        const htmlTag = document.documentElement;
+        htmlTag.setAttribute('lang', lang);
+        htmlTag.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        
+        // تحديث النصوص الثابتة في الصفحة
+        document.getElementById('main-title').innerText = translations[lang].title;
+        document.getElementById('main-subtitle').innerText = translations[lang].subtitle;
+        document.getElementById('search').placeholder = translations[lang].searchPlaceholder;
+        document.getElementById('footer-text').innerHTML = translations[lang].footer;
+        document.getElementById('lang-toggle').innerText = translations[lang].langBtn;
+        
+        // إعادة تحديث العداد والملفات باللغة الجديدة
+        if (filesCloud.length > 0) {
+            document.getElementById('counter').innerText = `${translations[lang].counterText}${filesCloud.length}`;
+            renderFiles(filesCloud);
+        } else {
+            document.getElementById('counter').innerText = translations[lang].loading;
+        }
+    }
+
+    // زر تبديل اللغة
+    document.getElementById('lang-toggle').addEventListener('click', () => {
+        const nextLang = currentLang === 'ar' ? 'en' : 'ar';
+        applyLanguage(nextLang);
+    });
+
+    // دالة التحكم بحجم الخط
     function changeFontSize(action) {
         currentFontSize += action;
-        // وضع حدود مسموحة للخط لتجنب تشويه الصفحة (بين 13px و 24px)
         if (currentFontSize < 13) currentFontSize = 13;
         if (currentFontSize > 24) currentFontSize = 24;
         document.documentElement.style.setProperty('--base-font-size', currentFontSize + 'px');
     }
 
-    // إدارة الوضع الليلي والنهاري وحفظ الخيار
+    // إدارة الوضع الليلي/النهاري
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
-    
-    // فحص إذا كان المستخدم قد اختار وضعاً مسبقاً
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
@@ -397,18 +485,13 @@
     themeToggleBtn.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeIcon(newTheme);
     });
 
     function updateThemeIcon(theme) {
-        if (theme === 'light') {
-            themeIcon.className = 'fas fa-sun';
-        } else {
-            themeIcon.className = 'fas fa-moon';
-        }
+        themeIcon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
     function getFileStyles(url) {
@@ -422,17 +505,20 @@
     }
 
     async function startApp() {
+        // تطبيق اللغة أولاً قبل جلب البيانات
+        applyLanguage(currentLang);
+        
         try {
             const res = await fetch('files.json');
             if (!res.ok) throw new Error();
             filesCloud = await res.json();
-            document.getElementById('counter').innerText = `إجمالي الملفات المتوفرة: ${filesCloud.length}`;
+            document.getElementById('counter').innerText = `${translations[currentLang].counterText}${filesCloud.length}`;
             renderFiles(filesCloud);
         } catch (err) {
             document.getElementById('files-list').innerHTML = `
                 <div class="status-msg" style="color: #ff7675;">
                     <i class="fas fa-radiation animate__animated animate__flash animate__infinite"></i>
-                    فشل الاتصال بملف البيانات JSON. تأكد من وجوده!
+                    ${translations[currentLang].error}
                 </div>`;
         }
     }
@@ -442,7 +528,7 @@
         container.innerHTML = '';
 
         if (items.length === 0) {
-            container.innerHTML = '<div class="status-msg"><i class="fas fa-ghost"></i> لم نجد أي ملف بهذا الاسم!</div>';
+            container.innerHTML = `<div class="status-msg"><i class="fas fa-ghost"></i> ${translations[currentLang].noFiles}</div>`;
             return;
         }
 
@@ -467,9 +553,9 @@
                 </div>
                 <div class="actions-wrapper">
                     <a href="${directLink}" class="btn-download" download>
-                        <i class="fas fa-arrow-down"></i> تحميل
+                        <i class="fas fa-arrow-down"></i> ${translations[currentLang].download}
                     </a>
-                    <button class="btn-copy" onclick="copyToClipboard('${directLink}')" title="نسخ رابط التحميل">
+                    <button class="btn-copy" onclick="copyToClipboard('${directLink}')" title="Copy link">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
@@ -492,7 +578,7 @@
                 document.execCommand('copy');
                 showToast();
             } catch (err) {
-                alert('عذراً، فشل نسخ الرابط تلقائياً.');
+                alert('Fails / فشل النسخ');
             }
             document.body.removeChild(textArea);
         }
@@ -501,7 +587,7 @@
     function showToast() {
         const toast = document.createElement('div');
         toast.className = 'toast-notification animate__animated animate__bounceInUp';
-        toast.innerHTML = '<i class="fas fa-check-circle"></i> تم نسخ رابط التحميل المباشر!';
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${translations[currentLang].toastSuccess}`;
         document.body.appendChild(toast);
         
         setTimeout(() => {
