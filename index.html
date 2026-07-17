@@ -3,131 +3,520 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز تحميل الملفات</title>
+    <title>مكتبة الملفات المشتركة</title>
+    <!-- خط Cairo الفاخر -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- مكتبة الأيقونات المتطورة -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة التأثيرات الحركية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
     <style>
+        /* المتغيرات الأساسية للوضعين */
+        :root {
+            --bg-gradient: linear-gradient(-45deg, #0a0b10, #1a1c29, #0f111a, #151824);
+            --card-bg: rgba(18, 20, 32, 0.75);
+            --text-main: #ffffff;
+            --text-sub: #b2bec3;
+            --card-item-bg: rgba(255, 255, 255, 0.02);
+            --card-item-hover: rgba(255, 255, 255, 0.06);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --search-bg: rgba(255, 255, 255, 0.03);
+            
+            --neon-purple: #6c5ce7;
+            --neon-cyan: #00cec9;
+            --neon-pink: #e84393;
+            --base-font-size: 16px;
+        }
+
+        /* متغيرات الوضع النهاري */
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(-45deg, #f5f6fa, #e6e9f0, #eef1f6, #f1f2f6);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --card-item-bg: #ffffff;
+            --card-item-hover: #f1f2f6;
+            --border-color: rgba(0, 0, 0, 0.05);
+            --search-bg: rgba(0, 0, 0, 0.02);
+            --neon-purple: #5f27cd;
+        }
+
+        html {
+            font-size: var(--base-font-size);
+            transition: font-size 0.2s ease;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 40px 20px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.5s ease, color 0.5s ease;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* شريط التحكم العلوي (ليلي/نهاري وتكبير الخط) */
+        .accessibility-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .acc-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 45px;
+            height: 45px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+
+        .acc-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 40px rgba(108, 92, 231, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            transition: background 0.5s ease, border 0.5s ease;
+        }
+
         h1 {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
+            font-weight: 900;
+            font-size: 2.6rem;
+            margin: 0 0 10px 0;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .file-counter {
+            text-align: center;
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            padding: 6px 16px;
+            border-radius: 50px;
+            width: fit-content;
+            margin: 0 auto 30px auto;
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+            font-weight: bold;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 35px;
+        }
+
         #search {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 18px 25px 18px 60px;
+            background: var(--search-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 1rem;
+            color: var(--text-main);
+            transition: all 0.4s ease;
+            font-family: 'Cairo', sans-serif;
         }
-        .file-item {
+
+        #search:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 25px rgba(0, 206, 201, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-cyan);
+            font-size: 1.3rem;
+        }
+
+        #files-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .file-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #edf2f7;
-            transition: background 0.2s;
+            background: var(--card-item-bg);
+            padding: 22px 28px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
         }
-        .file-item:hover {
-            background-color: #f8fafc;
+
+        .file-card::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--neon-purple);
+            transition: all 0.3s;
+            border-radius: 0 20px 20px 0;
         }
-        .file-name {
-            font-weight: 500;
-            font-size: 16px;
+
+        .file-card:hover {
+            transform: translateX(-5px) translateY(-2px);
+            background: var(--card-item-hover);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.1);
         }
-        .download-btn {
-            background-color: #3182ce;
+
+        .file-card:hover::before {
+            width: 6px;
+            background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-purple));
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .file-icon-wrapper {
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdf-icon { color: #ff7675; }
+        .zip-icon { color: #ffeaa7; }
+        .image-icon { color: #55efc4; }
+        .video-icon { color: #74b9ff; }
+        .app-icon { color: #a29bfe; }
+
+        .file-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-main);
+        }
+
+        .actions-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-download {
+            background: linear-gradient(45deg, var(--neon-purple), #5f27cd);
             color: white;
             text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
+            padding: 12px 22px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(45deg, var(--neon-cyan), #00a8ff);
+            color: #000;
+        }
+
+        .btn-copy {
+            background: var(--search-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            box-sizing: border-box;
+        }
+
+        .btn-copy:hover {
+            background: var(--neon-pink);
+            border-color: var(--neon-pink);
+            color: white;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neon-pink);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
             font-weight: bold;
-            transition: background 0.2s;
+            box-shadow: 0 10px 25px rgba(232, 67, 147, 0.4);
+            z-index: 1000;
         }
-        .download-btn:hover {
-            background-color: #2b6cb0;
-        }
-        .no-files {
+
+        .footer-credits {
+            margin-top: 30px;
             text-align: center;
-            color: #718096;
-            padding: 20px;
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .footer-credits span {
+            color: var(--neon-pink);
+            font-weight: bold;
+        }
+
+        .status-msg {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-sub);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 80px 10px 20px 10px; } /* مساحة إضافية للأزرار العلوية بالهاتف */
+            .main-container { padding: 25px 20px; border-radius: 20px; }
+            h1 { font-size: 2rem; }
+            .file-card { flex-direction: column; align-items: stretch; gap: 20px; text-align: center; padding: 20px; }
+            .file-details { flex-direction: column; gap: 10px; }
+            .actions-wrapper { width: 100%; gap: 10px; }
+            .btn-download { flex: 1; justify-content: center; }
+            .btn-copy { width: 50px; height: 48px; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- شريط التحكم بالوضع الليلي وتكبير الحروف -->
+<div class="accessibility-bar animate__animated animate__fadeIn">
+    <!-- زر التبديل الليلي/النهاري -->
+    <button class="acc-btn" id="theme-toggle" title="تبديل الوضع الليلي/النهاري">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+    <!-- أزرار تكبير وتصغير الحروف -->
+    <button class="acc-btn" onclick="changeFontSize(1)" title="تكبير الخط">
+        <i class="fas fa-font"></i><i class="fas fa-plus" style="font-size: 10px; margin-right: 2px;"></i>
+    </button>
+    <button class="acc-btn" onclick="changeFontSize(-1)" title="تصغير الخط">
+        <i class="fas fa-font"></i><i class="fas fa-minus" style="font-size: 10px; margin-right: 2px;"></i>
+    </button>
+</div>
+
+<div class="main-container animate__animated animate__fadeInUp">
     <h1>مكتبة الملفات المشتركة</h1>
-    <input type="text" id="search" placeholder="ابحث عن ملف...">
-    <div id="files-list">جاري تحميل الملفات...</div>
+    <p class="subtitle">انقر للتحميل المباشر أو انسخ رابط الملف فوراً</p>
+    
+    <div id="counter" class="file-counter">جاري فحص المستندات...</div>
+
+    <div class="search-box">
+        <input type="text" id="search" placeholder="ابحث عن ملفك هنا...">
+        <i class="fas fa-search"></i>
+    </div>
+
+    <div id="files-list">
+        <div class="status-msg"><i class="fas fa-circle-notch fa-spin"></i> جاري استدعاء مصفوفة البيانات...</div>
+    </div>
+</div>
+
+<div class="footer-credits animate__animated animate__fadeIn animate__delay-1s">
+    تم إنشاء هذا الموقع لـ <span>القروب الثلاثي</span> © 2026
 </div>
 
 <script>
-    let allFiles = [];
+    let filesCloud = [];
+    let currentFontSize = 16; // الحجم الافتراضي للخط
 
-    // جلب البيانات من ملف JSON
-    async function loadFiles() {
-        try {
-            const response = await fetch('files.json');
-            allFiles = await response.json();
-            displayFiles(allFiles);
-        } catch (error) {
-            document.getElementById('files-list').innerHTML = '<p class="no-files">حدث خطأ أثناء تحميل قائمة الملفات.</p>';
-            console.error(error);
+    // دالة التحكم في تكبير وتصغير الخط
+    function changeFontSize(action) {
+        currentFontSize += action;
+        // وضع حدود مسموحة للخط لتجنب تشويه الصفحة (بين 13px و 24px)
+        if (currentFontSize < 13) currentFontSize = 13;
+        if (currentFontSize > 24) currentFontSize = 24;
+        document.documentElement.style.setProperty('--base-font-size', currentFontSize + 'px');
+    }
+
+    // إدارة الوضع الليلي والنهاري وحفظ الخيار
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    // فحص إذا كان المستخدم قد اختار وضعاً مسبقاً
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+        if (theme === 'light') {
+            themeIcon.className = 'fas fa-sun';
+        } else {
+            themeIcon.className = 'fas fa-moon';
         }
     }
 
-    // عرض الملفات في الصفحة
-    function displayFiles(files) {
-        const listContainer = document.getElementById('files-list');
-        listContainer.innerHTML = '';
+    function getFileStyles(url) {
+        const urlLower = url.toLowerCase();
+        if (urlLower.includes('.pdf')) return { icon: 'fas fa-file-pdf', style: 'pdf-icon' };
+        if (urlLower.includes('.zip') || urlLower.includes('.rar')) return { icon: 'fas fa-file-archive', style: 'zip-icon' };
+        if (urlLower.includes('.jpg') || urlLower.includes('.png') || urlLower.includes('.jpeg')) return { icon: 'fas fa-file-image', style: 'image-icon' };
+        if (urlLower.includes('.mp4') || urlLower.includes('.mov') || urlLower.includes('.avi')) return { icon: 'fas fa-file-video', style: 'video-icon' };
+        if (urlLower.includes('.exe') || urlLower.includes('.dmg') || urlLower.includes('.app')) return { icon: 'fas fa-laptop-code', style: 'app-icon' };
+        return { icon: 'fas fa-file-alt', style: 'app-icon' };
+    }
 
-        if (files.length === 0) {
-            listContainer.innerHTML = '<p class="no-files">لا توجد ملفات متطابقة.</p>';
+    async function startApp() {
+        try {
+            const res = await fetch('files.json');
+            if (!res.ok) throw new Error();
+            filesCloud = await res.json();
+            document.getElementById('counter').innerText = `إجمالي الملفات المتوفرة: ${filesCloud.length}`;
+            renderFiles(filesCloud);
+        } catch (err) {
+            document.getElementById('files-list').innerHTML = `
+                <div class="status-msg" style="color: #ff7675;">
+                    <i class="fas fa-radiation animate__animated animate__flash animate__infinite"></i>
+                    فشل الاتصال بملف البيانات JSON. تأكد من وجوده!
+                </div>`;
+        }
+    }
+
+    function renderFiles(items) {
+        const container = document.getElementById('files-list');
+        container.innerHTML = '';
+
+        if (items.length === 0) {
+            container.innerHTML = '<div class="status-msg"><i class="fas fa-ghost"></i> لم نجد أي ملف بهذا الاسم!</div>';
             return;
         }
 
-        files.forEach(file => {
-            // تصحيح رابط دروب بوكس ليكون تحميل مباشر فوراً
-            let directUrl = file.url.replace('?dl=0', '?dl=1');
-            if (!directUrl.includes('?dl=1') && !directUrl.includes('&dl=1')) {
-                directUrl += directUrl.includes('?') ? '&dl=1' : '?dl=1';
+        items.forEach((item, index) => {
+            let directLink = item.url.replace('?dl=0', '?dl=1');
+            if (!directLink.includes('?dl=1') && !directLink.includes('&dl=1')) {
+                directLink += directLink.includes('?') ? '&dl=1' : '?dl=1';
             }
 
-            const item = document.createElement('div');
-            item.className = 'file-item';
-            item.innerHTML = `
-                <span class="file-name">${file.name}</span>
-                <a href="${directUrl}" class="download-btn" download>تحميل</a>
+            const visualData = getFileStyles(directLink);
+
+            const card = document.createElement('div');
+            card.className = `file-card animate__animated animate__fadeInUp`;
+            card.style.animationDelay = `${index * 0.05}s`;
+
+            card.innerHTML = `
+                <div class="file-details">
+                    <div class="file-icon-wrapper ${visualData.style}">
+                        <i class="${visualData.icon}"></i>
+                    </div>
+                    <span class="file-title">${item.name}</span>
+                </div>
+                <div class="actions-wrapper">
+                    <a href="${directLink}" class="btn-download" download>
+                        <i class="fas fa-arrow-down"></i> تحميل
+                    </a>
+                    <button class="btn-copy" onclick="copyToClipboard('${directLink}')" title="نسخ رابط التحميل">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
             `;
-            listContainer.appendChild(item);
+            container.appendChild(card);
         });
     }
 
-    // ميزة البحث السريع
+    function copyToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => showToast());
+        } else {
+            let textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                alert('عذراً، فشل نسخ الرابط تلقائياً.');
+            }
+            document.body.removeChild(textArea);
+        }
+    }
+
+    function showToast() {
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification animate__animated animate__bounceInUp';
+        toast.innerHTML = '<i class="fas fa-check-circle"></i> تم نسخ رابط التحميل المباشر!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.className = 'toast-notification animate__animated animate__bounceOutDown';
+            setTimeout(() => toast.remove(), 500);
+        }, 2500);
+    }
+
     document.getElementById('search').addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = allFiles.filter(file => file.name.toLowerCase().includes(term));
-        displayFiles(filtered);
+        const val = e.target.value.toLowerCase().trim();
+        const filtered = filesCloud.filter(f => f.name.toLowerCase().includes(val));
+        renderFiles(filtered);
     });
 
-    // تشغيل الدالة عند فتح الصفحة
-    loadFiles();
+    startApp();
 </script>
 
 </body>
