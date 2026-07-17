@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز تحميل الملفات</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        #search {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #edf2f7;
+            transition: background 0.2s;
+        }
+        .file-item:hover {
+            background-color: #f8fafc;
+        }
+        .file-name {
+            font-weight: 500;
+            font-size: 16px;
+        }
+        .download-btn {
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .download-btn:hover {
+            background-color: #2b6cb0;
+        }
+        .no-files {
+            text-align: center;
+            color: #718096;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>مكتبة الملفات المشتركة</h1>
+    <input type="text" id="search" placeholder="ابحث عن ملف...">
+    <div id="files-list">جاري تحميل الملفات...</div>
+</div>
+
+<script>
+    let allFiles = [];
+
+    // جلب البيانات من ملف JSON
+    async function loadFiles() {
+        try {
+            const response = await fetch('files.json');
+            allFiles = await response.json();
+            displayFiles(allFiles);
+        } catch (error) {
+            document.getElementById('files-list').innerHTML = '<p class="no-files">حدث خطأ أثناء تحميل قائمة الملفات.</p>';
+            console.error(error);
+        }
+    }
+
+    // عرض الملفات في الصفحة
+    function displayFiles(files) {
+        const listContainer = document.getElementById('files-list');
+        listContainer.innerHTML = '';
+
+        if (files.length === 0) {
+            listContainer.innerHTML = '<p class="no-files">لا توجد ملفات متطابقة.</p>';
+            return;
+        }
+
+        files.forEach(file => {
+            // تصحيح رابط دروب بوكس ليكون تحميل مباشر فوراً
+            let directUrl = file.url.replace('?dl=0', '?dl=1');
+            if (!directUrl.includes('?dl=1') && !directUrl.includes('&dl=1')) {
+                directUrl += directUrl.includes('?') ? '&dl=1' : '?dl=1';
+            }
+
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `
+                <span class="file-name">${file.name}</span>
+                <a href="${directUrl}" class="download-btn" download>تحميل</a>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+
+    // ميزة البحث السريع
+    document.getElementById('search').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allFiles.filter(file => file.name.toLowerCase().includes(term));
+        displayFiles(filtered);
+    });
+
+    // تشغيل الدالة عند فتح الصفحة
+    loadFiles();
+</script>
+
+</body>
+</html>
