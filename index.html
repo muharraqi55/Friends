@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة التأثيرات الحركية -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    
+
     <style>
         :root {
             --bg-gradient: linear-gradient(-45deg, #0a0b10, #1a1c29, #0f111a, #151824);
@@ -21,7 +21,7 @@
             --card-item-hover: rgba(255, 255, 255, 0.06);
             --border-color: rgba(255, 255, 255, 0.05);
             --search-bg: rgba(255, 255, 255, 0.03);
-            
+
             --neon-purple: #6c5ce7;
             --neon-cyan: #00cec9;
             --neon-pink: #e84393;
@@ -75,6 +75,7 @@
             display: flex;
             gap: 10px;
             z-index: 100;
+            flex-wrap: wrap;
         }
 
         html[dir="ltr"] .accessibility-bar {
@@ -104,6 +105,12 @@
             transform: translateY(-2px);
             border-color: var(--neon-cyan);
             color: var(--neon-cyan);
+        }
+
+        .acc-btn.active {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(232, 67, 147, 0.3);
         }
 
         .main-container {
@@ -373,6 +380,9 @@
 
         @media (max-width: 600px) {
             body { padding: 90px 10px 20px 10px; }
+            .accessibility-bar { top: 10px; left: 10px; gap: 6px; }
+            html[dir="ltr"] .accessibility-bar { right: 10px; }
+            .acc-btn { height: 38px; padding: 0 10px; font-size: 0.95rem; }
             .main-container { padding: 25px 20px; border-radius: 20px; }
             h1 { font-size: 2rem; }
             .file-card { flex-direction: column; align-items: stretch; gap: 20px; text-align: center; padding: 20px; }
@@ -381,7 +391,185 @@
             .btn-download { flex: 1; justify-content: center; }
             .btn-copy { width: 50px; height: 48px; }
         }
+
+        /* ============================================ */
+        /* ======== GLASSMORPHISM MODE STYLES ======== */
+        /* ============================================ */
+
+        [data-glass="true"] body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-attachment: fixed;
+        }
+
+        [data-glass="true"][data-theme="light"] body {
+            background: linear-gradient(135deg, #e0e5ec 0%, #c9d6ff 50%, #e2e2e2 100%);
+            background-attachment: fixed;
+        }
+
+        [data-glass="true"] .main-container {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        [data-glass="true"][data-theme="light"] .main-container {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        [data-glass="true"] .file-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px) saturate(150%);
+            -webkit-backdrop-filter: blur(15px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-glass="true"][data-theme="light"] .file-card {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-glass="true"] .file-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(108, 92, 231, 0.4);
+            box-shadow: 
+                0 8px 32px rgba(108, 92, 231, 0.15),
+                0 0 20px rgba(0, 206, 201, 0.1);
+            transform: translateX(-5px) translateY(-3px) scale(1.01);
+        }
+
+        [data-glass="true"][data-theme="light"] .file-card:hover {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(108, 92, 231, 0.3);
+            box-shadow: 
+                0 8px 32px rgba(108, 92, 231, 0.1),
+                0 0 20px rgba(0, 206, 201, 0.05);
+        }
+
+        [data-glass="true"] .file-card::before {
+            background: linear-gradient(to bottom, 
+                rgba(0, 206, 201, 0.8), 
+                rgba(108, 92, 231, 0.8));
+            box-shadow: 0 0 10px rgba(0, 206, 201, 0.5);
+        }
+
+        [data-glass="true"] .file-card:hover::before {
+            width: 6px;
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.8);
+        }
+
+        [data-glass="true"] .acc-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-glass="true"][data-theme="light"] .acc-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        [data-glass="true"] .acc-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 206, 201, 0.2);
+        }
+
+        [data-glass="true"] .acc-btn.active {
+            background: rgba(232, 67, 147, 0.15);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(232, 67, 147, 0.3);
+        }
+
+        [data-glass="true"] #search {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-glass="true"][data-theme="light"] #search {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        [data-glass="true"] #search:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 
+                0 0 25px rgba(0, 206, 201, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        [data-glass="true"] .btn-copy {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        [data-glass="true"][data-theme="light"] .btn-copy {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        [data-glass="true"] .btn-copy:hover {
+            background: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(232, 67, 147, 0.4);
+        }
+
+        [data-glass="true"] .downloader-alert {
+            background: rgba(232, 67, 147, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(232, 67, 147, 0.2);
+        }
+
+        [data-glass="true"] .file-counter {
+            background: rgba(108, 92, 231, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(108, 92, 231, 0.15);
+        }
+
+        [data-glass="true"] .footer-credits {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-glass="true"][data-theme="light"] .footer-credits {
+            text-shadow: none;
+        }
+
+        /* تأثير الإضاءة المتحركة في الخلفية */
+        [data-glass="true"] body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(108, 92, 231, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 206, 201, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(232, 67, 147, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: glassGlow 20s ease-in-out infinite;
+        }
+
+        @keyframes glassGlow {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(2%, 2%) scale(1.02); }
+            66% { transform: translate(-1%, 1%) scale(0.98); }
+        }
     </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -389,6 +577,9 @@
     <button class="acc-btn" id="lang-toggle" title="Switch Language / تبديل اللغة">EN</button>
     <button class="acc-btn" id="theme-toggle" title="تبديل الوضع الليلي/النهاري">
         <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+    <button class="acc-btn" id="glass-toggle" title="تبديل وضع الزجاج / Toggle Glassmorphism">
+        <i class="fas fa-gem" id="glass-icon"></i>
     </button>
     <button class="acc-btn" onclick="changeFontSize(1)" title="تكبير الخط">
         <i class="fas fa-font"></i><i class="fas fa-plus" style="font-size: 10px; margin-right: 2px;"></i>
@@ -401,7 +592,7 @@
 <div class="main-container animate__animated animate__fadeInUp">
     <h1 id="main-title">مكتبة الملفات المشتركة</h1>
     <p id="main-subtitle" class="subtitle">انقر للتحميل المباشر أو انسخ رابط الملف فوراً</p>
-    
+
     <div id="counter" class="file-counter">جاري فحص المستندات...</div>
 
     <!-- رسالة داونلودر المضافة -->
@@ -424,7 +615,7 @@
 <script>
     let filesCloud = [];
     let currentFontSize = 16;
-    
+
     const translations = {
         ar: {
             title: "مكتبة الملفات المشتركة",
@@ -461,18 +652,18 @@
     function applyLanguage(lang) {
         currentLang = lang;
         localStorage.setItem('lang', lang);
-        
+
         const htmlTag = document.documentElement;
         htmlTag.setAttribute('lang', lang);
         htmlTag.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-        
+
         document.getElementById('main-title').innerText = translations[lang].title;
         document.getElementById('main-subtitle').innerText = translations[lang].subtitle;
         document.getElementById('downloader-msg').innerHTML = translations[lang].downloaderText;
         document.getElementById('search').placeholder = translations[lang].searchPlaceholder;
         document.getElementById('footer-text').innerHTML = translations[lang].footer;
         document.getElementById('lang-toggle').innerText = translations[lang].langBtn;
-        
+
         if (filesCloud.length > 0) {
             document.getElementById('counter').innerText = `${translations[lang].counterText}${filesCloud.length}`;
             renderFiles(filesCloud);
@@ -493,6 +684,7 @@
         document.documentElement.style.setProperty('--base-font-size', currentFontSize + 'px');
     }
 
+    // ===== Theme Toggle =====
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -511,6 +703,33 @@
         themeIcon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
+    // ===== Glassmorphism Toggle =====
+    const glassToggleBtn = document.getElementById('glass-toggle');
+    const glassIcon = document.getElementById('glass-icon');
+    const savedGlass = localStorage.getItem('glass') || 'false';
+    document.documentElement.setAttribute('data-glass', savedGlass);
+    updateGlassState(savedGlass);
+
+    glassToggleBtn.addEventListener('click', () => {
+        const currentGlass = document.documentElement.getAttribute('data-glass');
+        const newGlass = currentGlass === 'true' ? 'false' : 'true';
+        document.documentElement.setAttribute('data-glass', newGlass);
+        localStorage.setItem('glass', newGlass);
+        updateGlassState(newGlass);
+    });
+
+    function updateGlassState(glass) {
+        if (glass === 'true') {
+            glassToggleBtn.classList.add('active');
+            glassIcon.className = 'fas fa-gem';
+            glassToggleBtn.title = currentLang === 'ar' ? 'إيقاف وضع الزجاج' : 'Disable Glassmorphism';
+        } else {
+            glassToggleBtn.classList.remove('active');
+            glassIcon.className = 'far fa-gem';
+            glassToggleBtn.title = currentLang === 'ar' ? 'تفعيل وضع الزجاج' : 'Enable Glassmorphism';
+        }
+    }
+
     // فحص صيغ الملفات المحسن ليدعم الروابط الطويلة والمعقدة
     function getFileStyles(url) {
         const cleanUrl = url.split('?')[0].toLowerCase(); // فحص الرابط الأصلي قبل علامات الاستفهام
@@ -524,7 +743,7 @@
 
     async function startApp() {
         applyLanguage(currentLang);
-        
+
         try {
             // إضافة ميزة منع الكاش لضمان جلب التحديثات فوراً
             const res = await fetch('files.json?v=' + Date.now());
@@ -610,7 +829,7 @@
         toast.className = 'toast-notification animate__animated animate__bounceInUp';
         toast.innerHTML = `<i class="fas fa-check-circle"></i> ${translations[currentLang].toastSuccess}`;
         document.body.appendChild(toast);
-        
+
         setTimeout(() => {
             toast.className = 'toast-notification animate__animated animate__bounceOutDown';
             setTimeout(() => toast.remove(), 500);
