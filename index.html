@@ -624,6 +624,10 @@
     <button class="acc-btn" onclick="changeFontSize(-1)" title="تصغير الخط">
         <i class="fas fa-font"></i><i class="fas fa-minus" style="font-size: 10px; margin-right: 2px;"></i>
     </button>
+    <!-- ===== زر مشاركة الصفحة (تم نقله للأعلى) ===== -->
+    <button class="acc-btn" id="share-btn" onclick="sharePage()" title="مشاركة الرابط / Share Link">
+        <i class="fas fa-share-nodes"></i>
+    </button>
 </div>
 
 <div class="main-container animate__animated animate__fadeInUp">
@@ -637,12 +641,12 @@
         للتحميل من برنامج "Downloader" ادخل هذا الكود <span>9499350</span>
     </div>
 
-    <!-- ===== صورة الكيو ار كود ===== -->
+    <!-- ===== صورة الكيو ار كود (في المنتصف لوحدها) ===== -->
     <div class="qr-code-wrapper animate__animated animate__zoomIn">
         <!-- تأكد أن اسم الصورة qrcode.png ومرفوعة بجانب هذا الملف -->
         <img src="qrcode.png" alt="QR Code">
     </div>
-    <!-- ============================= -->
+    <!-- ============================================== -->
 
     <div class="search-box">
         <input type="text" id="search" placeholder="ابحث عن ملفك هنا...">
@@ -673,7 +677,8 @@
             download: "تحميل",
             toastSuccess: "تم نسخ رابط التحميل المباشر!",
             footer: "تم إنشاء هذا الموقع لـ <span>القروب الثلاثي</span> © 2026",
-            langBtn: "EN"
+            langBtn: "EN",
+            shareTooltip: "مشاركة الرابط"
         },
         en: {
             title: "Shared Files Library",
@@ -687,7 +692,8 @@
             download: "Download",
             toastSuccess: "Direct download link copied successfully!",
             footer: "This website was created for <span>The Trio Group</span> © 2026",
-            langBtn: "عربي"
+            langBtn: "عربي",
+            shareTooltip: "Share Link"
         }
     };
 
@@ -707,6 +713,9 @@
         document.getElementById('search').placeholder = translations[lang].searchPlaceholder;
         document.getElementById('footer-text').innerHTML = translations[lang].footer;
         document.getElementById('lang-toggle').innerText = translations[lang].langBtn;
+        
+        // تحديث التلميح الخاص بزر المشاركة
+        document.getElementById('share-btn').title = translations[lang].shareTooltip;
 
         if (filesCloud.length > 0) {
             document.getElementById('counter').innerText = `${translations[lang].counterText}${filesCloud.length}`;
@@ -774,9 +783,27 @@
         }
     }
 
+    // ===== دالة مشاركة الصفحة =====
+    function sharePage() {
+        const shareData = {
+            title: translations[currentLang].title,
+            text: currentLang === 'ar' ? 'تصفح مكتبة الملفات المشتركة الآن! - القروب الثلاثي' : 'Check out the Shared Files Library now! - The Trio Group',
+            url: window.location.href
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData)
+                .then(() => console.log('تمت المشاركة بنجاح'))
+                .catch((error) => console.log('تم إلغاء المشاركة أو حدث خطأ:', error));
+        } else {
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    }
+
     // فحص صيغ الملفات المحسن ليدعم الروابط الطويلة والمعقدة
     function getFileStyles(url) {
-        const cleanUrl = url.split('?')[0].toLowerCase(); // فحص الرابط الأصلي قبل علامات الاستفهام
+        const cleanUrl = url.split('?')[0].toLowerCase();
         if (cleanUrl.includes('.pdf')) return { icon: 'fas fa-file-pdf', style: 'pdf-icon' };
         if (cleanUrl.includes('.zip') || cleanUrl.includes('.rar')) return { icon: 'fas fa-file-archive', style: 'zip-icon' };
         if (cleanUrl.includes('.jpg') || cleanUrl.includes('.png') || cleanUrl.includes('.jpeg')) return { icon: 'fas fa-file-image', style: 'image-icon' };
@@ -789,7 +816,6 @@
         applyLanguage(currentLang);
 
         try {
-            // إضافة ميزة منع الكاش لضمان جلب التحديثات فوراً
             const res = await fetch('files.json?v=' + Date.now());
             if (!res.ok) throw new Error();
             filesCloud = await res.json();
@@ -814,7 +840,6 @@
         }
 
         items.forEach((item, index) => {
-            // التأكد من تعديل الرابط ليكون تنزيل مباشر
             let directLink = item.url;
             if (directLink.includes('dl=0')) {
                 directLink = directLink.replace('dl=0', 'dl=1');
