@@ -180,6 +180,42 @@
             display: inline-block;
         }
 
+        /* ===== تنسيق صورة الكيو ار كود ===== */
+        .qr-code-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 30px auto;
+            padding: 12px;
+            background: #ffffff; /* خلفية بيضاء لضمان قراءة الكيو ار كود بالكاميرا */
+            border-radius: 20px;
+            width: fit-content;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 20px rgba(108, 92, 231, 0.2);
+            border: 2px solid var(--border-color);
+            transition: all 0.4s ease;
+        }
+
+        .qr-code-wrapper:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 206, 201, 0.3), 0 0 30px rgba(232, 67, 147, 0.3);
+            border-color: var(--neon-cyan);
+        }
+
+        .qr-code-wrapper img {
+            width: 150px; /* يمكنك تغيير الحجم حسب رغبتك */
+            height: 150px;
+            display: block;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        /* في الوضع الليلي والزجاجي نضمن بقاء الخلفية بيضاء للكيو ار كود */
+        [data-theme="dark"] .qr-code-wrapper,
+        [data-glass="true"] .qr-code-wrapper {
+            background: #ffffff;
+        }
+        /* ==================================== */
+
         .search-box {
             position: relative;
             margin-bottom: 35px;
@@ -390,6 +426,7 @@
             .actions-wrapper { width: 100%; gap: 10px; }
             .btn-download { flex: 1; justify-content: center; }
             .btn-copy { width: 50px; height: 48px; }
+            .qr-code-wrapper img { width: 120px; height: 120px; }
         }
 
         /* ============================================ */
@@ -599,6 +636,13 @@
     <div id="downloader-msg" class="downloader-alert">
         للتحميل من برنامج "Downloader" ادخل هذا الكود <span>9499350</span>
     </div>
+
+    <!-- ===== صورة الكيو ار كود ===== -->
+    <div class="qr-code-wrapper animate__animated animate__zoomIn">
+        <!-- تأكد أن اسم الصورة qrcode.png ومرفوعة بجانب هذا الملف -->
+        <img src="qrcode.png" alt="QR Code">
+    </div>
+    <!-- ============================= -->
 
     <div class="search-box">
         <input type="text" id="search" placeholder="ابحث عن ملفك هنا...">
